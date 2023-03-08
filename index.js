@@ -76,31 +76,32 @@ export class FetchScheduler {
         let tResolve, tReject;
         const start = () => {
             fetch(url, options).then(res => {
+                promise.isRuning = false;
                 this._removePromise(promise);
                 if (tResolve) {
                     tResolve(res);
                 }
             }).catch(err => {
+                promise.isRuning = false;
                 this._removePromise(promise);
                 if (tReject) {
                     tReject(err);
                 }
             });
         };
-        const promise = new Promise((resolve, reject) => {
-            tResolve = resolve;
-            tReject = reject;
-        });
-        promise.cancel = () => {
+        const cancel = () => {
             if (promise.isRuning) {
                 controller.abort();
             }
             this._removePromise(promise);
         };
+        const promise = new Promise((resolve, reject) => {
+            tResolve = resolve;
+            tReject = reject;
+        });
+        promise.cancel = cancel;
         promise.start = start;
-        promise.remove = () => {
-            this.removeFetch(promise);
-        };
+        promise.remove = cancel;
         promise.uid = uid;
         promise.host = host;
         return promise;
