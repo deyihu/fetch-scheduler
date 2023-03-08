@@ -98,6 +98,9 @@ export class FetchScheduler {
             this._removePromise(promise);
         };
         promise.start = start;
+        promise.remove = () => {
+            this.removeFetch(promise);
+        };
         promise.uid = uid;
         promise.host = host;
         return promise;
