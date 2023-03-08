@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Map - Display a map</title>
+<style type="text/css">
+    html,
+    body {
+        margin: 0px;
+        height: 100%;
+        width: 100%
+    }
+
+    .container {
+        width: 100%;
+        height: 100%
+    }
+
+    .panel {
+        position: fixed;
+        z-index: 1;
+        left: 10px;
+        top: 10px;
+        border: 1px gray solid;
+        padding: 20px;
+        background-color: white;
+        border-radius: 5px;
+    }
+
+    .host {
+        font-weight: bold;
+        color: red;
+    }
+</style>
+<script src="https://unpkg.com/fetch-scheduler/dist/fetch-scheduler.js"></script>
+
+<body>
+    <div class="panel"></div>
+    <script>
+
+        const fetchScheduler = new fs.FetchScheduler({ requestCount: 6 });
+        const urls = [];
+        let i = 105196;
+        while (i < 105696) {
+            urls.push(`https://c.basemaps.cartocdn.com/light_all/17/${i}/52219.png`);
+            urls.push(`https://a.basemaps.cartocdn.com/dark_all/17/${i}/52219.png`);
+            urls.push(`https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/52219/${i}`);
+            urls.push(`https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x=${i}&y=52219&z=17`);
+            i++;
+        }
+        let count = 0;
+        const fetchList = urls.map(url => {
+            const promise = fetchScheduler.createFetch(url);
+            promise.then(res => {
+                return res.blob();
+            }).then(blob => {
+                const url = URL.createObjectURL(blob);
+                const image = new Image();
+                image.src = url;
+                document.body.appendChild(image);
+                updateTooltip();
+                // console.log(++count);
+            }).catch(err => {
+                console.error(err);
+            })
+            return promise;
+        })
+
+        //test cancel
+        setTimeout(() => {
+            fetchList[0].cancel();
+        }, 1);
+
+
+        function updateTooltip() {
+            const html = fetchScheduler.getCurrentInfo().map(d => {
+                const { host, waitCount } = d;
+                return `<span class="host">${host}</span> wait fetch count:${waitCount}`;
+            })
+            document.querySelector('.panel').innerHTML = html.join('<br>')
+        }
+
+
+    </script>
+</body>
+
+</html>
