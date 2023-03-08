@@ -1,6 +1,6 @@
 {
   "name": "fetch-scheduler",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/fetch-scheduler.js",
   "module": "./index.js",
@@ -13,8 +13,8 @@
     "type": "git",
     "url": "git+https://github.com/deyihu/fetch-scheduler.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "deyihu",
+  "license": "BSD-3-Clause license",
   "bugs": {
     "url": "https://github.com/deyihu/fetch-scheduler/issues"
   },
