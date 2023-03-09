@@ -36,7 +36,8 @@ export class FetchScheduler {
         if (!this.hosts[host]) {
             this.hosts[host] = {
                 waitQueue: [],
-                runingQueue: []
+                runingQueue: [],
+                requestCount: 0
             };
         }
         return this;
@@ -77,6 +78,9 @@ export class FetchScheduler {
         const start = () => {
             fetch(url, options).then(res => {
                 promise.isRuning = false;
+                if (this.hosts[host]) {
+                    this.hosts[host].requestCount++;
+                }
                 this._removePromise(promise);
                 if (tResolve) {
                     tResolve(res);
@@ -136,7 +140,8 @@ export class FetchScheduler {
         for (const host in hosts) {
             const info = {
                 host,
-                waitCount: hosts[host].waitQueue.length
+                waitCount: hosts[host].waitQueue.length,
+                requestCount: hosts[host].requestCount
             };
             result.push(info);
         }
