@@ -74,8 +74,8 @@
 
         function updateTooltip() {
             const html = fetchScheduler.getCurrentInfo().map(d => {
-                const { host, waitCount } = d;
-                return `<span class="host">${host}</span> wait fetch count:${waitCount}`;
+                const { host, waitCount, requestCount } = d;
+                return `<span class="host">${host}</span> <br>requestCount:${requestCount},wait fetch count:${waitCount}`;
             })
             document.querySelector('.panel').innerHTML = html.join('<br>')
         }
