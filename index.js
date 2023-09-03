@@ -82,8 +82,10 @@ export class FetchScheduler {
                     this.hosts[host].requestCount++;
                 }
                 this._removePromise(promise);
-                if (tResolve) {
+                if (tResolve && res.ok) {
                     tResolve(res);
+                } else if (tReject) {
+                    tReject(res);
                 }
             }).catch(err => {
                 promise.isRuning = false;
